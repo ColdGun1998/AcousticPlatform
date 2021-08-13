@@ -1,0 +1,37 @@
+{
+  "id": "2679624",
+  "name": "sonicplatform",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "基站平台",
+  "glyphs": [
+    {
+      "icon_id": "15046018",
+      "name": "pc_analysis",
+      "font_class": "pc_analysis",
+      "unicode": "e6aa",
+      "unicode_decimal": 59050
+    },
+    {
+      "icon_id": "11538093",
+      "name": "local",
+      "font_class": "local",
+      "unicode": "e67d",
+      "unicode_decimal": 59005
+    },
+    {
+      "icon_id": "21489489",
+      "name": "line-base station（基站）",
+      "font_class": "line-basestationjizhan",
+      "unicode": "e717",
+      "unicode_decimal": 59159
+    },
+    {
+      "icon_id": "19494228",
+      "name": "声音",
+      "font_class": "shengyin",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    }
+  ]
+}
