@@ -1,26 +1,29 @@
 <template>
-    <div class="wrapper"></div>
+    <div :body-style="{padding:'0px'}" class="wrapper">
+        <ScatterChart/>
+    </div>
 </template>
 <script>
-import { wsMessage } from '../../utils/wsMessage'
+import ScatterChart from '../../components/ScatterChart'
 export default {
   name: 'Map',
+  data () {
+    return {
+    }
+  },
+  components: { ScatterChart },
   setup () {
-    wsMessage.connect('立即与服务器通信')
+
   }
 }
 </script>
 <style lang="scss" scoped>
 .wrapper{
-    position: absolute;
-    left: 0;
-    top:0;
-    margin: 25px 25px;
-    border-radius: 20px;
-    width: 60%;
-    height: 75%;
+    flex:none;
+    border-radius:6px;
+    width:800px;
+    height:600px;
     border: 2px  solid #f1f1f3;
-    background:url('../../assets/img/laboratory.jpg') no-repeat;
 }
 
 </style>

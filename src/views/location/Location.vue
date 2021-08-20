@@ -1,8 +1,8 @@
 <template>
-    <div class="wrapper">
-      <Map/>
-      <LocationSettings/>
-    </div>
+  <div class="wrapper">
+  <Map/>
+  <LocationSettings/>
+  </div>
 </template>
 
 <script>
@@ -19,5 +19,7 @@ export default ({
 <style lang="scss" scoped>
 .wrapper{
   display: flex;
+  align-items: flex-start;
+  min-height:calc(100vh-60px);
 }
 </style>

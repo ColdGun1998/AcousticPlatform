@@ -1,26 +1,37 @@
 <template>
-    <div class="wrapper">Location</div>
+    <div class="wrapper">{{name}}</div>
 </template>
 <script>
+import { reactive, toRefs } from 'vue'
+import { useRouter } from 'vue-router'
 export default {
+  name: 'RightHeader',
   setup () {
-
+    const router = useRouter()
+    const state = reactive({ name: 'Location' })
+    const pathMap = {
+      Location: 'Location',
+      Beacon: 'Beacon'
+    }
+    router.afterEach((to) => {
+      state.name = pathMap[to.name]
+    })
+    return {
+      ...toRefs(state)
+    }
   }
 }
 </script>
 <style lang="scss" scoped>
 .wrapper{
-  position: absolute;
-  left:230px;
-  top:0;
-  height: 75px;
-  width: 100%;
+  height: 60px;
   border-bottom: 2px  solid #f1f1f3;
   color: #2c333c;
   font-size: 20px;
-  line-height: 78px;
   font-weight: bold;
-  margin-left: 24px;
-  padding-left: 6px;
+  display :flex;
+  justify-content: space-between;
+  align-items: center;
+  padding:0 5px;
 }
 </style>

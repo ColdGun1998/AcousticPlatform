@@ -1,5 +1,7 @@
 <template>
-  <router-view class="wrapper"></router-view>
+  <div class='wrapper'>
+    <router-view />
+  </div>
 </template>
 <script>
 export default {
@@ -10,10 +12,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .wrapper{
-  position: absolute;
-  left:230px;
-  top: 80px;
-  height: 100%;
-  width: 100%;
+  height: calc(100vh - 60px);
+  overflow:auto;
+  padding:20px 0;
+  box-sizing:border-box;
 }
 </style>
