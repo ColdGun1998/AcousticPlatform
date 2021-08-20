@@ -4,12 +4,12 @@
 <script>
 
 import { get } from '../utils/request.js'
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, onBeforeUnmount, computed } from 'vue'
 import { useStore } from 'vuex'
 
 let myChart = null
-const updateChart = async (userId, sceneId, chart) => {
-  const result = await get(`/api/location/get?time_stamp=1621581570000&scene_id=${sceneId}&user_id=${userId}&frame_size=10`)
+const updateChart = async (userId, sceneId, sampleNum, displayTrack, chart) => {
+  const result = await get(`/api/location/get?time_stamp=1621581570000&scene_id=${sceneId}&user_id=${userId}&frame_size=${sampleNum}`)
   // 过滤器
   if (result?.code === 200 && result?.data) {
     const locations = result.data.list[0].locations.map((item) => {
@@ -17,17 +17,26 @@ const updateChart = async (userId, sceneId, chart) => {
     })
     chart.setOption({
       series: [{
+        name: '最近位置',
         data: locations
-      }]
+      }, {
+        name: '历史轨迹',
+        data: locations
+      }
+      ]
     })
   }
 }
 const initChart = (chart) => {
   var option = {
-    title: {
-      text: '实验地点：XXX',
-      left: 'center',
-      top: '15px'
+    toolbox: {
+      show: true,
+      feature: {
+        saveAsImage: { title: '' }
+      }
+    },
+    legend: {
+      top: 10
     },
     xAxis: {
       type: 'value',
@@ -68,12 +77,20 @@ const initChart = (chart) => {
     ],
     series: [
       {
+        name: '最近位置',
         type: 'scatter',
         itemStyle: {
           opacity: 0.8
         },
         symbol: 'pin',
         symbolSize: 25,
+        data: [[1.1, 1.2],
+          [3.4, 5.6]]
+      },
+      {
+        name: '历史轨迹',
+        type: 'line',
+        smooth: true,
         data: [[1.1, 1.2],
           [3.4, 5.6]]
       }
@@ -99,13 +116,29 @@ export default {
       myChart.dispose()
     })
     const store = useStore()
-    setInterval(() => {
-      const { userId, sceneId } = store.state.locationSettings
-      console.log(userId, sceneId)
-      updateChart(userId, sceneId, myChart)
+    let timer = null
+    // displaySettings
+    const displaySettings = store.state.displaySettings
+    const displayTrack = computed(() => {
+      const displayTrack = displaySettings.displayTrack
+      console.log('displayTrack', displayTrack)
+      return displayTrack
+    })
+
+    timer = setInterval(() => {
+      const { userId, sceneId, sampleNum, connectStatus } = store.state.locationSettings
+      const { displayTrack } = store.state.displaySettings
+      console.log('获取最新的位置信息', userId, sceneId, sampleNum, connectStatus, displayTrack)
+      if (connectStatus) {
+        updateChart(userId, sceneId, sampleNum, displayTrack, myChart)
+      }
     }, 1000)
-  },
-  methods: {
+    onBeforeUnmount(() => {
+      clearInterval(timer)
+    })
+    return {
+      displayTrack
+    }
   }
 }
 </script>

@@ -21,9 +21,9 @@ export default {
 .wrapper{
     flex:none;
     border-radius:6px;
-    width:800px;
-    height:600px;
     border: 2px  solid #f1f1f3;
+    width: 600px;
+    height: 600px;
 }
 
 </style>
