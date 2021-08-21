@@ -2,8 +2,8 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import { ElButton, ElInputNumber, ElForm, ElFormItem, ElSelect, ElOption, ElSwitch } from 'element-plus'
-
+import { ElButton, ElInputNumber, ElForm, ElFormItem, ElSelect, ElOption, ElSwitch, ElCard, ElTable, ElTableColumn, ElContainer, ElAside } from 'element-plus'
+import './style/index.scss'
 import 'element-plus/packages/theme-chalk/src/base.scss'
 
 const app = createApp(App).use(store).use(router)
@@ -14,4 +14,9 @@ app.use(ElFormItem)
 app.use(ElSelect)
 app.use(ElOption)
 app.use(ElSwitch)
+app.use(ElCard)
+app.use(ElTableColumn)
+app.use(ElContainer)
+app.use(ElAside)
+app.use(ElTable)
 app.mount('#app')

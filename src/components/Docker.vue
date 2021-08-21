@@ -27,7 +27,9 @@ export default {
   setup () {
     const dockerList = [
       { icon: 'icon-local', text: 'Location', to: { name: 'Location' } },
-      { icon: 'icon-line-basestationjizhan', text: 'Beacon', to: { name: 'Beacon' } }
+      { icon: 'icon-line-basestationjizhan', text: 'Beacon', to: { name: 'Beacon' } },
+      { icon: 'icon-changdi', text: 'Scene', to: { name: 'Scene' } },
+      { icon: 'icon-history', text: 'History', to: { name: 'History' } }
     ]
     return { dockerList }
   }
@@ -37,13 +39,9 @@ export default {
 <style lang="scss" scoped>
 @import '../assets/iconfont/iconfont.css';
 .docker {
-  flex:none;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  width: 240px !important;
-  border-right: 2px  solid #f1f1f3;
-  padding-right:10px;
+  padding:0 10px;
   &__icon{
     display: flex;
     align-items:center;
@@ -75,8 +73,7 @@ export default {
     a {
       display: flex;
       color: #474b53 ;
-      text-decoration: none;
-      padding: 0px 20px;
+      padding: 0px 10px;
     }
     &--active{
       background-color: #fff;
@@ -93,9 +90,7 @@ export default {
       font-size: 12px;
       font-weight: bolder;
     }
-
   }
-
 }
 
 </style>

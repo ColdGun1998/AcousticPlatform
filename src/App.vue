@@ -1,40 +1,47 @@
 <template>
   <div class="layout">
+    <el-container class="container">
+      <el-aside class="aside">
       <Docker :currentIndex="1"/>
-      <div class="content">
-        <RightHead/>
+      </el-aside>
+      <el-container class="content">
+        <Header/>
         <div class ="main">
           <router-view />
         </div>
-      </div>
+      </el-container>
+    </el-container>
   </div>
 </template>
 
 <script>
-// import { reactive, toRefs } from 'vue'
-// import { useRouter } from 'vue-router'
 import Docker from './components/Docker'
-import RightHead from './components/RightHead'
+import Header from './components/Header'
 export default ({
   name: 'App',
-  components: { Docker, RightHead },
+  components: { Docker, Header },
   setup () {
 
   }
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .layout{
-  display : flex;
-  align-items: flex-start;
   min-height:100vh;
+  background-color: #fff;
+}
+.container{
+  height: 100vh;
+}
+.aside{
+  width: 240px!important;
+  border-right: 2px  solid #f1f1f3;
 }
 .content{
-    flex: auto;
-    max-height: 100vh;
     display:flex;
     flex-direction:column;
+    max-height: 100vh;
     overflow:hidden;
     padding:0 20px;
 }
@@ -42,7 +49,6 @@ export default ({
   height: calc(100vh - 60px);
   overflow:auto;
   padding:20px 0;
-  box-sizing:border-box;
 }
 
 </style>

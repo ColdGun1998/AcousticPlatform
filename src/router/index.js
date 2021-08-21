@@ -2,6 +2,8 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import Location from '../views/location/Location'
 import Beacon from '../views/beacon/Beacon'
 import Login from '../views/login/Login'
+import Scene from '../views/scene/Scene'
+import History from '../views/history/History'
 const routes = [
   {
     path: '/',
@@ -12,6 +14,15 @@ const routes = [
     path: '/beacon',
     name: 'Beacon',
     component: Beacon
+  },
+  {
+    path: '/scene',
+    name: 'Scene',
+    component: Scene
+  }, {
+    path: '/history',
+    name: 'History',
+    component: History
   },
   {
     path: '/login',

@@ -4,7 +4,7 @@
 <script>
 
 import { get } from '../utils/request.js'
-import { onMounted, onUnmounted, onBeforeUnmount, computed } from 'vue'
+import { onMounted, onUnmounted, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 
 let myChart = null
@@ -105,6 +105,17 @@ const initChart = (chart) => {
 
 export default {
   name: 'ScatterChart',
+  computed: {
+    displayTrack () {
+      console.log('computed')
+      return this.$store.state.displaySettings.displayTrack
+    }
+  },
+  watch: {
+    displayTrack (newVal, oldVal) {
+      console.log('displayTrack改变', newVal, oldVal)
+    }
+  },
   setup () {
     onMounted(() => {
       if (window.echarts) {
@@ -117,14 +128,6 @@ export default {
     })
     const store = useStore()
     let timer = null
-    // displaySettings
-    const displaySettings = store.state.displaySettings
-    const displayTrack = computed(() => {
-      const displayTrack = displaySettings.displayTrack
-      console.log('displayTrack', displayTrack)
-      return displayTrack
-    })
-
     timer = setInterval(() => {
       const { userId, sceneId, sampleNum, connectStatus } = store.state.locationSettings
       const { displayTrack } = store.state.displaySettings
@@ -136,9 +139,6 @@ export default {
     onBeforeUnmount(() => {
       clearInterval(timer)
     })
-    return {
-      displayTrack
-    }
   }
 }
 </script>

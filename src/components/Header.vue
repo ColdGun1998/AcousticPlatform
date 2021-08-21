@@ -5,13 +5,15 @@
 import { reactive, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 export default {
-  name: 'RightHeader',
+  name: 'Header',
   setup () {
     const router = useRouter()
     const state = reactive({ name: 'Location' })
     const pathMap = {
       Location: 'Location',
-      Beacon: 'Beacon'
+      Beacon: 'Beacon',
+      Scene: 'Scene',
+      History: 'History'
     }
     router.afterEach((to) => {
       state.name = pathMap[to.name]
