@@ -30,7 +30,7 @@
       <el-table-column
         prop="fmapSettings"
         label="蜂鸟地图配置"
-        width="120"
+        width="200"
       >
       </el-table-column>
       <el-table-column
@@ -42,7 +42,6 @@
       <el-table-column
         prop="createTime"
         label="添加时间"
-        width="200"
       >
       </el-table-column>
     </el-table>

@@ -3,26 +3,21 @@ import Vuex from 'vuex'
 const locationSettings = {
   userId: 1,
   sceneId: 1,
-  sampleNum: 10,
-  connectStatus: true
+  sampleNum: 1000000
 }
 
 export default Vuex.createStore({
   state: {
     locationSettings: locationSettings,
-    displaySettings: { displayTrack: false }
+    curLocation: [], // 最近位置 接口getCurLocation
+    locationList: []// 最近历史轨迹 接口getLocationList
   },
   mutations: {
     changeLocationSettings (state, payload) {
-      const { userId, sceneId, sampleNum, connectStatus } = payload
+      const { userId, sceneId, sampleNum } = payload
       state.locationSettings.userId = userId
       state.locationSettings.sceneId = sceneId
       state.locationSettings.sampleNum = sampleNum
-      state.locationSettings.connectStatus = connectStatus
-    },
-    changeDisplaySettings (state, payload) {
-      const { displayTrack } = payload
-      state.displaySettings.displayTrack = displayTrack
     }
   },
   actions: {
