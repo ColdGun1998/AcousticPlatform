@@ -1,5 +1,20 @@
 <template>
   <el-card class="card">
+    <template #header>
+      <div class="header">
+        <el-button type="primary" size="small" icon="el-icon-plus" @click="handleAdd">增加</el-button>
+        <el-popconfirm
+          title="确定删除吗？"
+          confirmButtonText='确定'
+          cancelButtonText='取消'
+          @confirm="handleDelete"
+        >
+          <template #reference>
+            <el-button type="danger" size="small" icon="el-icon-delete">批量删除</el-button>
+          </template>
+        </el-popconfirm>
+      </div>
+    </template>
     <el-table
       :data="tableData"
       style="width: 100% "
@@ -46,18 +61,30 @@
       </el-table-column>
     </el-table>
   </el-card>
+  <DialogAddScene ref='addScene' :type="actionType"/>
 </template>
 <script>
-import { onMounted, reactive, toRefs } from 'vue'
+import DialogAddScene from '../../components/DialogAddScene'
+import { onMounted, ref, reactive, toRefs } from 'vue'
 export default {
+  components: { DialogAddScene },
   name: 'Secne',
   setup () {
     const state = reactive({
       loading: false, // 控制加载动画
       tableData: [], // 数据列表
       currentPage: 1, // 当前页数
-      pageSize: 10 // 每页请求数
+      pageSize: 10, // 每页请求数
+      actionType: 'add' // 操作类型
     })
+    const addScene = ref(null)
+    const handleAdd = () => {
+      state.actionType = 'add'
+      console.log(addScene)
+      addScene.value.open()
+    }
+    const handleDelete = () => {
+    }
     onMounted(() => {
       getSceneList()
     })
@@ -70,7 +97,7 @@ export default {
         sceneName: '教九实验室',
         imgUrl: '',
         fmapSettings: '464435434',
-        beaconSettings: '基站配置',
+        beaconSettings: '1.2-2.3-4.5&1.4-7.6-4.7',
         createTime: '2021-8-20'
       }, {
         sceneId: 2,
@@ -85,7 +112,10 @@ export default {
       state.tableData = sceneList
     }
     return {
-      ...toRefs(state)
+      ...toRefs(state),
+      addScene,
+      handleAdd,
+      handleDelete
     }
   }
 }
