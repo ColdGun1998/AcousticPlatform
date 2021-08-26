@@ -18,13 +18,14 @@
     <el-table
       :data="tableData"
       style="width: 100% "
+      @selection-change="handleSelectionChange"
      >
       <el-table-column
         type="selection"
         width="55">
       </el-table-column>
       <el-table-column
-        prop="sceneId"
+        prop="id"
         label="场景ID"
         width="80">
       </el-table-column>
@@ -45,7 +46,6 @@
       <el-table-column
         prop="fmapSettings"
         label="蜂鸟地图配置"
-        width="200"
       >
       </el-table-column>
       <el-table-column
@@ -55,17 +55,49 @@
       >
       </el-table-column>
       <el-table-column
-        prop="createTime"
         label="添加时间"
+        width="200"
       >
+        <template #default="scope">
+          <i class="el-icon-time"></i>
+          <span style="margin-left: 10px">{{ scope.row.ctime }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="操作"
+        width="100"
+      >
+        <template #default="scope">
+          <a style="cursor: pointer; margin-right: 10px" @click="handleEdit(scope.row.id)">修改</a>
+          <el-popconfirm
+            title="确定删除吗？"
+            confirmButtonText='确定'
+            cancelButtonText='取消'
+            @confirm="handleDeleteOne(scope.row.id)"
+          >
+            <template #reference>
+              <a style="cursor: pointer" >删除</a>
+            </template>
+          </el-popconfirm>
+        </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+    class = "pagination"
+    layout="prev, pager, next"
+    :total="total"
+    :page-size="pageSize"
+    :current-page="currentPage"
+    @current-change="changePage">
+    </el-pagination>
   </el-card>
-  <DialogAddScene ref='addScene' :type="actionType"/>
+  <DialogAddScene ref='addScene' :reload="getSceneList" :type="actionType"/>
 </template>
 <script>
+import { get, post } from '../../utils/request.js'
 import DialogAddScene from '../../components/DialogAddScene'
 import { onMounted, ref, reactive, toRefs } from 'vue'
+import { ElMessage } from 'element-plus'
 export default {
   components: { DialogAddScene },
   name: 'Secne',
@@ -74,52 +106,83 @@ export default {
       loading: false, // 控制加载动画
       tableData: [], // 数据列表
       currentPage: 1, // 当前页数
-      pageSize: 10, // 每页请求数
-      actionType: 'add' // 操作类型
+      pageSize: 2, // 每页请求数
+      total: 0, // 总页数
+      actionType: 'add', // 操作类型
+      multipleSelection: [] // 选中项
     })
     const addScene = ref(null)
     const handleAdd = () => {
       state.actionType = 'add'
-      console.log(addScene)
       addScene.value.open()
     }
-    const handleDelete = () => {
+    const handleDelete = async () => {
+      if (!state.multipleSelection.length) {
+        ElMessage.error('请选择至少一项场景')
+        return
+      }
+      const data = {
+        id: state.multipleSelection.map(item => item.id)
+      }
+      const result = await post('/api/scene/delete', data)
+      if (result?.code === 200) {
+        ElMessage.success('删除成功')
+        getSceneList()
+      }
+    }
+
+    const handleDeleteOne = async (id) => {
+      const data = {
+        id
+      }
+      const result = await post('/api/scene/delete', data)
+      if (result?.code === 200) {
+        ElMessage.success('删除成功')
+        getSceneList()
+      }
+    }
+    const handleSelectionChange = (val) => {
+      state.multipleSelection = val
+    }
+    const handleEdit = (id) => {
+      state.actionType = 'edit'
+      addScene.value.open(id)
     }
     onMounted(() => {
       getSceneList()
     })
-    const getSceneList = () => {
+    const getSceneList = async () => {
       // 模拟从后端拿到场景列表
       state.loading = true
       // 请求后端数据
-      const sceneList = [{
-        sceneId: 1,
-        sceneName: '教九实验室',
-        imgUrl: '',
-        fmapSettings: '464435434',
-        beaconSettings: '1.2-2.3-4.5&1.4-7.6-4.7',
-        createTime: '2021-8-20'
-      }, {
-        sceneId: 2,
-        sceneName: '教九一楼大厅',
-        imgUrl: '',
-        fmapSettings: '4444453487',
-        beaconSettings: '基站配置',
-        createTime: '2021-8-19'
+      const result = await get(`api/scene/get_list?pageSize=${state.pageSize}&pageNumber=${state.currentPage}`)
+      if (result?.code === 200 && result?.data) {
+        state.tableData = result.data.sceneList
+        state.total = result.data.total
+        state.loading = false
       }
-      ]
-      // 赋值
-      state.tableData = sceneList
+    }
+    const changePage = (val) => {
+      state.currentPage = val
+      getSceneList()
     }
     return {
       ...toRefs(state),
       addScene,
+      getSceneList,
       handleAdd,
-      handleDelete
+      handleDelete,
+      handleEdit,
+      handleDeleteOne,
+      handleSelectionChange,
+      changePage
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-
+.pagination{
+ text-align:center;
+ margin-top:10px;
+}
 </style>

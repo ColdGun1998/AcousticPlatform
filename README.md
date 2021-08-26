@@ -33,4 +33,8 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 7. vue3 computed数据（依赖vuex中的数据）如果不在模板中使用，则不会触发
 8. 具名插槽和作用域插槽的具体用法
 9. 自己实现首页flex布局有问题，高度不能自适应，改成用element
-10. vue2和vue3选择  
+10. vue2和vue3选择
+11. 列表懒加载
+12. 买 OSS 服务，将图片等静态资源上传至 CDN，通过内容分发的形式，让使用的用户就近获取在线资源。
+13. 上传图片的地址前后端怎么统一
+14. PATCH请求，删除请求

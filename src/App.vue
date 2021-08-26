@@ -38,17 +38,17 @@ export default ({
   width: 240px!important;
   border-right: 2px  solid #f1f1f3;
 }
+
 .content{
     display:flex;
     flex-direction:column;
     max-height: 100vh;
     overflow:hidden;
-    padding:0 20px;
 }
 .main{
   height: calc(100vh - 60px);
   overflow:auto;
-  padding:20px 0;
+  padding:20px;
   box-sizing: border-box;
 }
 
