@@ -44,11 +44,12 @@ export default ({
     flex-direction:column;
     max-height: 100vh;
     overflow:hidden;
+    padding:0 20px;
 }
 .main{
   height: calc(100vh - 60px);
   overflow:auto;
-  padding:20px;
+  padding:20px 0;
   box-sizing: border-box;
 }
 

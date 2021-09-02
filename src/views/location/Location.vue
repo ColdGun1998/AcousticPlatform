@@ -2,7 +2,7 @@
 <el-card class="wrapper">
   <template #header>
     <div class="settings">
-      <el-form class="settings__form" :inline="true"  :model="settings"  @submit.prevent>
+      <el-form size="small" class="settings__form" :inline="true"  :model="settings"  @submit.prevent>
       <el-form-item  label="选择用户">
         <el-select v-model="settings.userId" placeholder="请选择">
           <el-option

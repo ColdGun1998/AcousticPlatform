@@ -100,7 +100,7 @@ import { onMounted, ref, reactive, toRefs } from 'vue'
 import { ElMessage } from 'element-plus'
 export default {
   components: { DialogAddScene },
-  name: 'Secne',
+  name: 'Scene',
   setup () {
     const state = reactive({
       loading: false, // 控制加载动画

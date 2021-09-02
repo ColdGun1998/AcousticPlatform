@@ -139,7 +139,7 @@ export default {
       const sufix = file.name.split('.')[1] || ''
       const isLt2M = file.size / 1024 / 1024 < 2
       if (!['jpg', 'jpeg', 'png'].includes(sufix)) {
-        ElMessage.error('请上传 jpg、jpeg、png 格式的图片')
+        ElMessage.error('请上传 jpg，jpeg，png 格式的图片')
         return false
       }
       if (!isLt2M) {
