@@ -1,9 +1,5 @@
 <template>
-  <el-dialog
-    :title="type == 'add' ? '添加场景' : '修改场景'"
-    v-model="visible"
-    width="400px"
-  >
+  <el-card>
       <el-form size="small" ref="formRef" :model="ruleForm" :rules="rules" label-width="100px" >
       <el-form-item label="背景地图" prop="imgUrl">
         <el-upload
@@ -19,41 +15,41 @@
         </el-upload>
       </el-form-item>
       <el-form-item label="场景名称" prop="sceneName" >
-        <el-input type="text"  v-model="ruleForm.sceneName"></el-input>
+        <el-input type="text" style="width: 300px"  v-model="ruleForm.sceneName"></el-input>
       </el-form-item>
       <el-form-item label="蜂鸟地图配置" prop="fmapSettings" >
-        <el-input type="text"  v-model="ruleForm.fmapSettings"></el-input>
+        <el-input type="text" style="width: 300px"  v-model="ruleForm.fmapSettings"></el-input>
       </el-form-item>
       <el-form-item label="基站配置" prop="beaconSettings">
-        <el-input type="text"  v-model="ruleForm.beaconSettings"></el-input>
+        <el-input type="text"  style="width: 300px" v-model="ruleForm.beaconSettings"></el-input>
+      </el-form-item>
+      <el-form-item>
+         <el-button @click="handleCancle">取 消</el-button>
+        <el-button type="primary" @click="submitAdd()">{{ id ? '修改' : '创建' }}</el-button>
       </el-form-item>
     </el-form>
- <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="visible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-      </span>
- </template>
-  </el-dialog>
+  </el-card>
 </template>
 
 <script>
-import { uploadImgServer, remoteImgAddress } from '../utils'
-import { get, post } from '../utils/request.js'
-
-import { ref, reactive, toRefs } from '@vue/reactivity'
+import { uploadImgServer, remoteImgAddress } from '../../utils'
+import { get, post } from '../../utils/request.js'
+import { useRoute, useRouter } from 'vue-router'
+import { ref, reactive, toRefs, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 export default {
-  name: 'DialogAddScene',
+  name: 'AddScene',
   props: {
     type: String, // add 为新增；edit 为编辑
     reload: Function
   },
   setup (props) {
     const formRef = ref(null)
+    const route = useRoute()
+    const router = useRouter()
+    const { id } = route.query // 编辑时传入的商品 id
     const state = reactive({
       uploadImgServer,
-      visible: false,
       ruleForm: {
         imgUrl: '',
         sceneName: '',
@@ -68,7 +64,19 @@ export default {
           { required: 'true', message: '场景名称不能为空', trigger: ['change'] }
         ]
       },
-      id: ''
+      id: id
+    })
+    onMounted(() => {
+      if (id) {
+        getDetail(id)
+      } else {
+        state.ruleForm = {
+          imgUrl: '',
+          sceneName: '',
+          beaconSettings: '',
+          fmapSettings: ''
+        }
+      }
     })
     // 根据id获取场景详情
     const getDetail = async (id) => {
@@ -82,27 +90,13 @@ export default {
         }
       }
     }
-    // 开启弹窗
-    const open = (id) => {
-      state.visible = true
-      if (id) {
-        state.id = id
-        getDetail(id)
-      } else {
-        state.ruleForm = {
-          imgUrl: '',
-          sceneName: '',
-          beaconSettings: '',
-          fmapSettings: ''
-        }
-      }
-    }
     // 提交表单
     const submitForm = () => {
       formRef.value.validate(async (valid) => {
         // valid 为是否通过表单验证的变量
         if (valid) {
-          if (props.type === 'add') {
+          if (!id) {
+            // 添加场景
             const data = {
               sceneName: state.ruleForm.sceneName,
               imgUrl: state.ruleForm.imgUrl,
@@ -112,8 +106,7 @@ export default {
             const result = await post('/api/scene/add', data)
             if (result?.code === 200) {
               ElMessage.success('新增场景成功')
-              state.visible = false
-              if (props.reload) props.reload()
+              router.push({ path: '/scene' })
             }
           } else {
             // 修改场景
@@ -127,8 +120,7 @@ export default {
             const result = await post('/api/scene/update', data)
             if (result?.code === 200) {
               ElMessage.success('修改场景成功')
-              state.visible = false
-              if (props.reload) props.reload()
+              router.push({ path: '/scene' })
             }
           }
         }
@@ -151,13 +143,17 @@ export default {
     const handleUrlSuccess = (res) => {
       state.ruleForm.imgUrl = remoteImgAddress + res.data || ''
     }
+    //
+    const handleCancle = () => {
+      router.push({ path: '/scene' })
+    }
     return {
       ...toRefs(state),
       formRef,
-      open,
       submitForm,
       handleBeforeUpload,
-      handleUrlSuccess
+      handleUrlSuccess,
+      handleCancle
     }
   }
 }

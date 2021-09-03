@@ -13,7 +13,8 @@ export default {
       Location: 'Location',
       Beacon: 'Beacon',
       Scene: 'Scene',
-      History: 'History'
+      History: 'History',
+      AddScene: 'AddScene'
     }
     router.afterEach((to) => {
       state.name = pathMap[to.name]

@@ -91,17 +91,16 @@
     @current-change="changePage">
     </el-pagination>
   </el-card>
-  <DialogAddScene ref='addScene' :reload="getSceneList" :type="actionType"/>
 </template>
 <script>
 import { get, post } from '../../utils/request.js'
-import DialogAddScene from '../../components/DialogAddScene'
 import { onMounted, ref, reactive, toRefs } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 export default {
-  components: { DialogAddScene },
   name: 'Scene',
   setup () {
+    const router = useRouter()
     const state = reactive({
       loading: false, // 控制加载动画
       tableData: [], // 数据列表
@@ -113,8 +112,7 @@ export default {
     })
     const addScene = ref(null)
     const handleAdd = () => {
-      state.actionType = 'add'
-      addScene.value.open()
+      router.push({ path: '/addScene' })
     }
     const handleDelete = async () => {
       if (!state.multipleSelection.length) {
@@ -145,8 +143,7 @@ export default {
       state.multipleSelection = val
     }
     const handleEdit = (id) => {
-      state.actionType = 'edit'
-      addScene.value.open(id)
+      router.push({ path: '/addScene', query: { id } })
     }
     onMounted(() => {
       getSceneList()

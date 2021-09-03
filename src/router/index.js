@@ -3,7 +3,9 @@ import Location from '../views/location/Location'
 import Beacon from '../views/beacon/Beacon'
 import Login from '../views/login/Login'
 import Scene from '../views/scene/Scene'
+import AddScene from '../views/scene/AddScene'
 import History from '../views/history/History'
+
 const routes = [
   {
     path: '/',
@@ -14,6 +16,11 @@ const routes = [
     path: '/beacon',
     name: 'Beacon',
     component: Beacon
+  },
+  {
+    path: '/addScene',
+    name: 'AddScene',
+    component: AddScene
   },
   {
     path: '/scene',
