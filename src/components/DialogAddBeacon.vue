@@ -4,21 +4,27 @@
     v-model="visible"
     width="400px"
   >
-      <el-form size="small" ref="formRef" :model="ruleForm" :rules="rules" label-width="100px" >
-      <el-form-item label="基站个数" prop="size" >
-        <el-input-number type="number"  :min="1" :max="10"  v-model="ruleForm.size" ></el-input-number>
-      </el-form-item>
-      <template
-        v-for="index in +ruleForm.size"
-        :key="index" >
+      <el-form size="small" ref="beaconForm" :model="beaconForm" label-width="100px" >
       <el-form-item
-        prop="coordinate"
-        :label="'基站'+index+'坐标'">
-        <el-input type="text" v-model = "ruleForm.coordinate[index-1]"></el-input>
+        label="基站个数"
+        prop="size"
+        :rules="{ required: 'true', message: '基站个数不能为空，在1到10之间', trigger: ['blur'] }"
+      >
+        <el-input-number type="number" @change="sizeChange" :min="1" :max="10"  v-model="beaconForm.size" ></el-input-number>
       </el-form-item>
-      </template>
+      <el-form-item
+        v-for="(item, index) in beaconForm.coordinate"
+        :label="'基站' + (index+1)"
+        :key="index"
+        :prop="'coordinate.' + index + '.value'"
+        :rules="[
+          {required: true, message: '基站坐标不能为空', trigger: 'blur'},
+         { validator: validateCoordinate, trigger: 'blur' }]"
+      >
+        <el-input v-model="item.value"></el-input>
+      </el-form-item>
       <el-form-item label="备注" prop="remark">
-        <el-input type="text"  v-model="ruleForm.remark"></el-input>
+        <el-input type="text"  v-model="beaconForm.remark"></el-input>
       </el-form-item>
     </el-form>
  <template #footer>
@@ -32,7 +38,6 @@
 
 <script>
 import { get, post } from '../utils/request.js'
-import { ref, reactive, toRefs, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 
 export default {
@@ -41,96 +46,117 @@ export default {
     type: String, // add 为新增；edit 为编辑
     reload: Function
   },
-  setup (props) {
-    const formRef = ref(null)
-    const state = reactive({
+  data () {
+    return {
       visible: false,
-      ruleForm: {
-        size: 2,
-        coordinate: new Array(2),
+      beaconForm: {
+        size: 1,
+        coordinate: [{ value: '' }],
         remark: ''
       },
-      rules: {
-        size: [
-          { required: 'true', message: '基站个数不能为空，在1到10之间', trigger: ['blur'] }
-        ],
-        coordinate: [
-          { required: 'true', trigger: ['blur', 'change'] }
-        ]
-      },
       id: ''
-    })
-    watch(() => state.size, () => { // 通过一个函数返回要监听的属性
-      if (state.size > 0 && state.size < 10) {
-        state.coordinate = new Array(state.size)
+    }
+  },
+  methods: {
+    validateCoordinate (rule, value, callback) {
+      if (value === '') {
+        callback(new Error('基站地址不为空'))
       }
-    })
-    // 根据id获取基站详情
-    const getDetail = async (id) => {
+      const strArr = value.split(',')
+      if (strArr && strArr.length === 3 && strArr.find((item) => !(isFinite(item) && item !== '')) === undefined) {
+        callback()
+      } else {
+        callback(new Error('格式错误！请输入三维坐标,用英文逗号隔开'))
+      }
+    },
+    sizeChange (newVal, oldVal) {
+      const oldCoordinate = this.beaconForm.coordinate
+      this.beaconForm.coordinate = new Array(newVal).fill('').map(() => { return { value: '' } })
+      const minSize = Math.min(newVal, oldVal)
+      for (let i = 0; i < minSize; i++) {
+        this.beaconForm.coordinate[i] = oldCoordinate[i]
+      }
+    },
+    // 根据ID获取基站群详情
+    getDetail: async function (id) {
       const result = await get(`api/beacon/detail?id=${id}`)
       if (result?.code === 200 && result?.data) {
-        state.ruleForm = {
+        this.beaconForm = {
           size: result.data.size,
-          coordinate: result.data.coordinate.split(';'),
+          coordinate: result.data.coordinate.split(';').map(item => { return { value: item } }),
           remark: result.data.remark
         }
       }
-    }
+    },
     // 开启弹窗
-    const open = (id) => {
-      state.visible = true
+    open: function (id) {
+      this.visible = true
       if (id) {
-        state.id = id
-        getDetail(id)
+        this.id = id
+        this.getDetail(id)
       } else {
-        state.ruleForm = {
-          size: 2,
-          coordinate: new Array(2),
+        this.beaconForm = {
+          size: 1,
+          coordinate: [{
+            value: ''
+          }],
           remark: ''
         }
       }
-    }
+    },
+    resetForm (formName) {
+      this.$refs[formName].resetFields()
+    },
+    removeDomain (item) {
+      var index = this.dynamicValidateForm.domains.indexOf(item)
+      if (index !== -1) {
+        this.dynamicValidateForm.domains.splice(index, 1)
+      }
+    },
+    addDomain () {
+      this.dynamicValidateForm.domains.push({
+        value: '',
+        key: Date.now()
+      })
+    },
     // 提交表单
-    const submitForm = () => {
-      formRef.value.validate(async (valid) => {
+    submitForm: function () {
+      this.$refs.beaconForm.validate(async (valid) => {
         // valid 为是否通过表单验证的变量
         if (valid) {
-          if (props.type === 'add') {
+          if (this.type === 'add') {
             const data = {
-              size: state.ruleForm.size,
-              coordinate: state.ruleForm.coordinate,
-              remark: state.ruleForm.remark
+              size: this.beaconForm.size,
+              coordinate: this.beaconForm.coordinate.map((item) => {
+                return item.value.split(',').map((str) => Number(str).toFixed(2)).join(',')
+              }),
+              remark: this.beaconForm.remark
             }
             const result = await post('/api/beacon/add', data)
             if (result?.code === 200) {
               ElMessage.success('新增基站成功')
-              state.visible = false
-              if (props.reload) props.reload()
+              this.visible = false
+              if (this.reload) this.reload()
             }
           } else {
             // 修改基站
             const data = {
-              id: state.id,
-              size: state.ruleForm.size,
-              coordinate: state.ruleForm.coordinate,
-              remark: state.ruleForm.remark
+              id: this.id,
+              size: this.beaconForm.size,
+              coordinate: this.beaconForm.coordinate.map((item) => {
+                return item.value.split(',').map((str) => Number(str).toFixed(2)).join(',')
+              }),
+              remark: this.beaconForm.remark
             }
-            console.log(data)
             const result = await post('/api/beacon/update', data)
             if (result?.code === 200) {
               ElMessage.success('修改场景成功')
-              state.visible = false
-              if (props.reload) props.reload()
+              this.visible = false
+              if (this.reload) this.reload()
             }
           }
         }
       })
-    }
-    return {
-      ...toRefs(state),
-      formRef,
-      open,
-      submitForm
     }
   }
 }

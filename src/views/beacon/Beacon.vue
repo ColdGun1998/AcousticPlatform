@@ -110,7 +110,7 @@ export default {
       loading: false, // 控制加载动画
       tableData: [], // 数据列表
       currentPage: 1, // 当前页数
-      pageSize: 10, // 每页请求数
+      pageSize: 5, // 每页请求数
       total: 0, // 总页数
       actionType: 'add', // 操作类型
       multipleSelection: [] // 选中项
@@ -161,7 +161,6 @@ export default {
       // 请求后端数据
       const result = await get(`api/beacon/get_list?pageSize=${state.pageSize}&pageNumber=${state.currentPage}`)
       if (result?.code === 200 && result?.data) {
-        console.log(result.data.beaconList)
         state.tableData = result.data.beaconList
         state.total = result.data.total
         state.loading = false
