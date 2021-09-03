@@ -45,3 +45,4 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 19. 布局相同的页面做组件的抽离，包括获取列表的方法，筛选条件等
 20. addScene作为二级路由
 22. 列表翻页后，自动滚动到顶部
+23. 级联选择器懒加载

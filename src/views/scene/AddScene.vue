@@ -21,11 +21,13 @@
         <el-input type="text" style="width: 300px"  v-model="ruleForm.fmapSettings"></el-input>
       </el-form-item>
       <el-form-item label="基站配置" prop="beaconSettings">
-        <el-input type="text"  style="width: 300px" v-model="ruleForm.beaconSettings"></el-input>
+        <el-select v-model="ruleForm.beaconSettings" placeholder="请选择">
+          <el-option v-for="item in beaconOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
          <el-button @click="handleCancle">取 消</el-button>
-        <el-button type="primary" @click="submitAdd()">{{ id ? '修改' : '创建' }}</el-button>
+        <el-button type="primary" @click="submitForm()">{{ id ? '修改' : '创建' }}</el-button>
       </el-form-item>
     </el-form>
   </el-card>
@@ -56,6 +58,17 @@ export default {
         beaconSettings: '',
         fmapSettings: ''
       },
+      beaconOptions: [
+        {
+          value: 12,
+          label: '基站(群ID：12)'
+        },
+        {
+          value: 34,
+          label: '基站(群ID：34)'
+        }
+      ],
+      beaconProps: { expandTrigger: 'hover' },
       rules: {
         imgUrl: [
           { required: 'true', message: '背景图片不能为空', trigger: ['change'] }
@@ -67,6 +80,7 @@ export default {
       id: id
     })
     onMounted(() => {
+      getBeaconList()
       if (id) {
         getDetail(id)
       } else {
@@ -78,6 +92,20 @@ export default {
         }
       }
     })
+    // 获取所有的基站列表
+    const getBeaconList = async () => {
+      // 从后端拿到所有的基站，默认基站群不会超过100
+      const result = await get('api/beacon/get_list?pageSize=100&pageNumber=1')
+      if (result?.code === 200 && result?.data) {
+        console.log(result.data.beaconList)
+        state.beaconOptions = result.data.beaconList.map((item) => {
+          return {
+            value: item.id,
+            label: '基站(群ID：' + item.id + ')'
+          }
+        })
+      }
+    }
     // 根据id获取场景详情
     const getDetail = async (id) => {
       const result = await get(`api/scene/detail?id=${id}`)

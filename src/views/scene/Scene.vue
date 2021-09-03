@@ -49,10 +49,13 @@
       >
       </el-table-column>
       <el-table-column
-        prop="beaconSettings"
-        label="基站配置"
-        width="120"
+        label="基站群ID"
+        width="100"
       >
+      <template #default="scope">
+          <i class="el-icon-coordinate"></i>
+          <span style="margin-left: 10px">{{ scope.row.beaconSettings }}</span>
+        </template>
       </el-table-column>
       <el-table-column
         label="添加时间"
