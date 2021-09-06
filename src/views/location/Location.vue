@@ -26,48 +26,59 @@
       <el-form-item label="历史轨迹点个数">
         <el-input-number v-model="settings.sampleNum"  controls-position="right" :min="1" :max="100000000" :precision="0"></el-input-number>
       </el-form-item>
+      <el-form-item label="显示蜂鸟地图">
+        <el-switch v-model="settings.displayFengMap" ></el-switch>
+      </el-form-item>
       </el-form>
     </div>
   </template>
-  <ScatterChart/>
+  <ScatterChart v-if="!settings.displayFengMap"/>
+  <FengMap v-else/>
 </el-card>
 </template>
 
 <script>
-import { reactive, watch } from 'vue'
+import { reactive, watch, toRefs, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import ScatterChart from '../../components/ScatterChart'
+import FengMap from '../../components/FengMap'
 export default {
   name: 'Location',
-  components: { ScatterChart },
+  components: { ScatterChart, FengMap },
   setup () {
-    const settings = reactive({
-      userId: 1,
-      userOptions: [{
-        id: 1,
-        name: 'admin'
-      },
-      {
-        id: 2,
-        name: 'Mitchell'
-      }],
-      sceneId: 1,
-      sceneOptions: [{
-        id: 1,
-        name: '邵逸夫体育馆'
-      },
-      {
-        id: 2,
-        name: '教九一楼大厅'
-      }],
-      sampleNum: 1000000
+    const state = reactive({
+      settings: {
+        userId: 1,
+        userOptions: [{
+          id: 1,
+          name: 'admin'
+        },
+        {
+          id: 2,
+          name: 'Mitchell'
+        }],
+        sceneId: 1,
+        sceneOptions: [{
+          id: 1,
+          name: '邵逸夫体育馆'
+        },
+        {
+          id: 2,
+          name: '教九一楼大厅'
+        }],
+        sampleNum: 1000000,
+        displayFengMap: false
+      }
+    })
+    onMounted(() => {
+
     })
     const store = useStore()
-    watch([() => settings.userId, () => settings.sceneId, () => settings.sampleNum], ([userId, sceneId, sampleNum], [oldUserId, oldSceneId, oldSampleNum]) => {
+    watch([() => state.settings.userId, () => state.settings.sceneId, () => state.settings.sampleNum], ([userId, sceneId, sampleNum], [oldUserId, oldSceneId, oldSampleNum]) => {
       store.commit('changeLocationSettings', { userId, sceneId, sampleNum })
     })
     return {
-      settings
+      ...toRefs(state)
     }
   }
 }

@@ -1,24 +1,31 @@
 <template>
   <el-card>
-      <el-form size="small" ref="formRef" :model="ruleForm" :rules="rules" label-width="100px" >
+      <el-form size="small" ref="formRef" :model="ruleForm" :rules="rules" label-width="120px" >
+      <el-form-item label="场景名称" prop="sceneName" >
+        <el-input type="text" style="width: 300px"  v-model="ruleForm.sceneName"></el-input>
+      </el-form-item>
       <el-form-item label="背景地图" prop="imgUrl">
         <el-upload
-          class="avatar-uploader"
           :action="uploadImgServer"
           accept="jpg,jpeg,png"
           :show-file-list="false"
           :before-upload="handleBeforeUpload"
           :on-success="handleUrlSuccess"
         >
-          <img  v-if="ruleForm.imgUrl" :src="ruleForm.imgUrl" class="avatar">
-          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
       </el-form-item>
-      <el-form-item label="场景名称" prop="sceneName" >
-        <el-input type="text" style="width: 300px"  v-model="ruleForm.sceneName"></el-input>
+      <el-form-item required  label="背景调整" >
+         <ImageTag  :imgUrl="ruleForm.imgUrl" />
       </el-form-item>
-      <el-form-item label="蜂鸟地图配置" prop="fmapSettings" >
-        <el-input type="text" style="width: 300px"  v-model="ruleForm.fmapSettings"></el-input>
+      <el-form-item label="蜂鸟fmapID" prop="fengMapId" >
+        <el-input type="text" style="width: 300px"  v-model="ruleForm.fengMapId"></el-input>
+      </el-form-item>
+      <el-form-item label="蜂鸟appName" prop="fengAppName" >
+        <el-input type="text" style="width: 300px"  v-model="ruleForm.fengAppName"></el-input>
+      </el-form-item>
+      <el-form-item label="蜂鸟key" prop="fengKey" >
+        <el-input type="text" style="width: 300px"  v-model="ruleForm.fengKey"></el-input>
       </el-form-item>
       <el-form-item label="基站配置" prop="beaconSettings">
         <el-select v-model="ruleForm.beaconSettings" placeholder="请选择">
@@ -38,9 +45,11 @@ import { uploadImgServer, remoteImgAddress } from '../../utils'
 import { get, post } from '../../utils/request.js'
 import { useRoute, useRouter } from 'vue-router'
 import { ref, reactive, toRefs, onMounted } from 'vue'
+import ImageTag from '../../components/ImageTag'
 import { ElMessage } from 'element-plus'
 export default {
   name: 'AddScene',
+  components: { ImageTag },
   props: {
     type: String, // add 为新增；edit 为编辑
     reload: Function
@@ -56,7 +65,10 @@ export default {
         imgUrl: '',
         sceneName: '',
         beaconSettings: '',
-        fmapSettings: ''
+        fmapSettings: '',
+        fengMapId: '',
+        fengAppName: '',
+        fengKey: ''
       },
       beaconOptions: [
         {
@@ -88,7 +100,10 @@ export default {
           imgUrl: '',
           sceneName: '',
           beaconSettings: '',
-          fmapSettings: ''
+          fmapSettings: '',
+          fengMapId: '',
+          fengAppName: '',
+          fengKey: ''
         }
       }
     })
@@ -101,7 +116,7 @@ export default {
         state.beaconOptions = result.data.beaconList.map((item) => {
           return {
             value: item.id,
-            label: '基站(群ID：' + item.id + ')'
+            label: '群ID：' + item.id + ''
           }
         })
       }
@@ -114,7 +129,10 @@ export default {
           imgUrl: result.data.imgUrl,
           sceneName: result.data.sceneName,
           beaconSettings: result.data.beaconSettings,
-          fmapSettings: result.data.fmapSettings
+          fmapSettings: result.data.fmapSettings,
+          fengMapId: result.data.fengMapId,
+          fengAppName: result.data.fengAppName,
+          fengKey: result.data.fengKey
         }
       }
     }
@@ -129,6 +147,9 @@ export default {
               sceneName: state.ruleForm.sceneName,
               imgUrl: state.ruleForm.imgUrl,
               fmapSettings: state.ruleForm.fmapSettings,
+              fengMapId: state.ruleForm.fengMapId,
+              fengAppName: state.ruleForm.fengAppName,
+              fengKey: state.ruleForm.fengKey,
               beaconSettings: state.ruleForm.beaconSettings
             }
             const result = await post('/api/scene/add', data)
@@ -143,8 +164,12 @@ export default {
               sceneName: state.ruleForm.sceneName,
               imgUrl: state.ruleForm.imgUrl,
               fmapSettings: state.ruleForm.fmapSettings,
+              fengMapId: state.ruleForm.fengMapId,
+              fengAppName: state.ruleForm.fengAppName,
+              fengKey: state.ruleForm.fengKey,
               beaconSettings: state.ruleForm.beaconSettings
             }
+            console.log(data)
             const result = await post('/api/scene/update', data)
             if (result?.code === 200) {
               ElMessage.success('修改场景成功')
@@ -168,13 +193,14 @@ export default {
       }
     }
     //
-    const handleUrlSuccess = (res) => {
+    const handleUrlSuccess = (res, file, fileList) => {
       state.ruleForm.imgUrl = remoteImgAddress + res.data || ''
     }
     //
     const handleCancle = () => {
       router.push({ path: '/scene' })
     }
+
     return {
       ...toRefs(state),
       formRef,
@@ -187,25 +213,4 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
- .avatar-uploader {
-    width: 100px;
-    height: 100px;
-    color: #ddd;
-    font-size: 30px;
-  }
-  .avatar-uploader-icon {
-    display: block;
-    width: 100%;
-    height: 100%;
-    border: 1px solid #e9e9e9;
-    border-radius: 6px;
-    padding: 32px 17px;
-  }
-  .avatar{
-    display: block;
-    width: 100px;
-    height: 100px;
-    border: 1px solid #e9e9e9;
-    border-radius: 6px;
-  }
 </style>

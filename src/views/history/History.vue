@@ -1,9 +1,11 @@
 <template>
-<el-button>按钮</el-button>
+  <FengMap/>
 </template>
 <script>
+import FengMap from '../../components/FengMap'
 export default {
-  name: 'Secne',
+  name: 'History',
+  components: { FengMap },
   data () {
     return {
     }

@@ -32,21 +32,33 @@
       <el-table-column
         prop="sceneName"
         label="场景名称"
-        width="150"
+        width="120"
       >
       </el-table-column>
       <el-table-column
         label="背景地图"
-        width="200"
+        width="180"
         >
         <template #default="scope">
           <img style="width: 150px;height: 150px" :src="scope.row.imgUrl" alt="">
         </template>
       </el-table-column>
       <el-table-column
-        prop="fmapSettings"
         label="蜂鸟地图配置"
       >
+      <template #default="scope" >
+        <el-form label-position="left" size="mini" class="feng__settings">
+          <el-form-item label="AppName">
+            <span>{{scope.row.fengAppName}}</span>
+          </el-form-item>
+          <el-form-item  label="Key">
+            <span>{{scope.row.fengKey}}</span>
+          </el-form-item>
+          <el-form-item  label="mapId">
+            <span>{{scope.row.fengMapId}}</span>
+          </el-form-item>
+        </el-form>
+       </template>
       </el-table-column>
       <el-table-column
         label="基站群ID"
@@ -55,11 +67,11 @@
       <template #default="scope">
           <i class="el-icon-coordinate"></i>
           <span style="margin-left: 10px">{{ scope.row.beaconSettings }}</span>
-        </template>
+      </template>
       </el-table-column>
       <el-table-column
         label="添加时间"
-        width="200"
+        width="150"
       >
         <template #default="scope">
           <i class="el-icon-time"></i>
@@ -184,5 +196,13 @@ export default {
 .pagination{
  text-align:center;
  margin-top:10px;
+}
+
+.feng__settings label {
+  color: #99a9bf;
+}
+.feng__settings .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
 }
 </style>

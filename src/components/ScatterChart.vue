@@ -11,20 +11,20 @@ let myChart = null
 const updateChart = async (userId, sceneId, sampleNum, chart) => {
   const result = await get(`api/location/get?scene_id=${sceneId}&user_id=${userId}&frame_size=${sampleNum}`)
   // 过滤器
-  if (result?.code === 200 && result?.data) {
-    const locations = result.data.list[0].locations.map((item) => {
-      return item.coordinate.split(',').map(Number)
-    })
-    chart.setOption({
-      series: [{
-        name: '最近位置',
-        data: [locations[0]]
-      }, {
-        name: '历史轨迹',
-        data: locations
-      }
-      ]
-    })
+  if (result?.code === 200 && result?.data && result?.data?.list) {
+    // const locations = result.data.list[0]?.locations.map((item) => {
+    //   return item.coordinate.split(',').map(Number)
+    // })
+    // chart.setOption({
+    //   series: [{
+    //     name: '最近位置',
+    //     data: [locations[0]]
+    //   }, {
+    //     name: '历史轨迹',
+    //     data: locations
+    //   }
+    //   ]
+    // })
   }
 }
 const initChart = (chart) => {

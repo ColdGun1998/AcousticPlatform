@@ -46,3 +46,6 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 20. addScene作为二级路由
 22. 列表翻页后，自动滚动到顶部
 23. 级联选择器懒加载
+24. fengmap npm安装后找不到依赖
+25. fengmap和echart获取dom元素应该用ref，却用了getElement
+26. fengmap加载动画
