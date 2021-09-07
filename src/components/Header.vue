@@ -14,6 +14,7 @@ export default {
       Beacon: 'Beacon',
       Scene: 'Scene',
       History: 'History',
+      Account: 'Account',
       AddScene: 'AddScene'
     }
     router.afterEach((to) => {

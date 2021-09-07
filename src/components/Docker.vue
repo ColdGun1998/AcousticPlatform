@@ -29,7 +29,8 @@ export default {
       { icon: 'icon-local', text: 'Location', to: { name: 'Location' } },
       { icon: 'icon-line-basestationjizhan', text: 'Beacon', to: { name: 'Beacon' } },
       { icon: 'icon-changdi', text: 'Scene', to: { name: 'Scene' } },
-      { icon: 'icon-history', text: 'History', to: { name: 'History' } }
+      { icon: 'icon-history', text: 'History', to: { name: 'History' } },
+      { icon: 'icon-user_account', text: 'Account', to: { name: 'Account' } }
     ]
     return { dockerList }
   }

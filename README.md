@@ -49,3 +49,10 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 24. fengmap npm安装后找不到依赖
 25. fengmap和echart获取dom元素应该用ref，却用了getElement
 26. fengmap加载动画
+27. 路由懒加载
+28. 路由常量抽离
+29. 父子组件传递对象
+30. 父组件改变场景后，子组件没有响应式改变；
+31. 没有选择场景时，应该有错误提示
+32. watchEffect优化watch
+33. 地图加载中显示动画

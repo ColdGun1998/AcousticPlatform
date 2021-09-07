@@ -6,6 +6,13 @@
   "description": "基站平台",
   "glyphs": [
     {
+      "icon_id": "20060081",
+      "name": "user_account",
+      "font_class": "user_account",
+      "unicode": "e65c",
+      "unicode_decimal": 58972
+    },
+    {
       "icon_id": "7677927",
       "name": "场地",
       "font_class": "changdi",

@@ -5,6 +5,7 @@ import Login from '../views/login/Login'
 import Scene from '../views/scene/Scene'
 import AddScene from '../views/scene/AddScene'
 import History from '../views/history/History'
+import Account from '../views/account/Account'
 
 const routes = [
   {
@@ -26,10 +27,16 @@ const routes = [
     path: '/scene',
     name: 'Scene',
     component: Scene
-  }, {
+  },
+  {
     path: '/history',
     name: 'History',
     component: History
+  },
+  {
+    path: '/account',
+    name: 'Account',
+    component: Account
   },
   {
     path: '/login',
