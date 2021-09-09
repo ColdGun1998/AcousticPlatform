@@ -9,11 +9,13 @@ import '../fengmap/fengmap.analyzer.min.js' // 路径分析类
 import '../fengmap/fengmap.navi.min.js' // 导航类
 import { ElLoading } from 'element-plus'
 import { onMounted, watch, onUnmounted } from 'vue'
+import useLocationTimerEffect from '../effects/locationEffects'
 // fengMap有关逻辑
-const useFengMapEffect = () => {
+const useFengMapEffect = (props) => {
   let map = null
   let loadingInstance = null
-  // 初始化加载动画
+  let locationMarker = null
+
   const initLoading = () => {
     const options = {
       target: document.getElementById('fengMap'),
@@ -22,7 +24,6 @@ const useFengMapEffect = () => {
     }
     loadingInstance = ElLoading.service(options)
   }
-  // 打开地图
   const openMap = (fmapID, appName, appKey) => {
     initLoading()
     map = new fengmap.FMMap({
@@ -30,28 +31,60 @@ const useFengMapEffect = () => {
       appName: appName,
       key: appKey
     })
+    locationMarker = new fengmap.FMLocationMarker({
+      url: require('@/assets/pointer.png'),
+      size: 24, // 设置图片显示尺寸
+      height: 3 // marker标注高度
+    })
     map.on('loadComplete', function (event) {
       loadingInstance.close()
+      map.addLocationMarker(locationMarker)
+      locationMarker.setPosition({
+        x: 13372916.325701144, // 设置定位点的x坐标
+        y: 3516683.1795740128, // 设置定位点的y坐标
+        grouID: 1
+      })
+    })
+    map.on('mapClickNode', function (event) {
+      // 打印出点击处的地图坐标
+      console.log(event.eventInfo.coord)
     })
     map.openMapById(fmapID)
   }
-  // 销毁地图
   const disposeMap = () => {
     if (map != null) {
       map.dispose()
     }
   }
+  const updataLocationMarker = (curLocation) => {
+    console.log(curLocation)
+    watch(() => curLocation.value, (newVal, oldVal) => {
+      console.log('监听到curLocation值发生变化', newVal)
+      // const locArr = newVal.split(',').map(Number)
+      // locationMarker.moveTo({
+      //   x: locArr[0], // 设置定位点的x坐标
+      //   y: locArr[1], // 设置定位点的y坐标
+      //   grouID: 1
+      // })
+    })
+  }
+  onMounted(() => {
+    openMap(props.fmapID, props.appName, props.appKey)
+  })
+  onUnmounted(() => {
+    disposeMap()
+  })
+  watch(() => props, () => {
+    disposeMap()
+    openMap(props.fmapID, props.appName, props.appKey)
+  }, { deep: true })
+
   return {
-    openMap,
-    disposeMap
+    updataLocationMarker
   }
 }
 // 定时获取最新定位数据的逻辑
-// const useLocationEffect = () => {
-//   return {
-//     0
-//   }
-// }
+
 export default {
   name: 'FengMap',
   props: {
@@ -60,17 +93,14 @@ export default {
     appKey: String
   },
   setup (props) {
-    const { openMap, disposeMap } = useFengMapEffect()
-    onMounted(() => {
-      openMap(props.fmapID, props.appName, props.appKey)
-    })
-    onUnmounted(() => {
-      disposeMap()
-    })
-    watch(() => props, () => {
-      disposeMap()
-      openMap(props.fmapID, props.appName, props.appKey)
-    }, { deep: true })
+    const { updataLocationMarker } = useFengMapEffect(props)
+    const { curLocation, locationList } = useLocationTimerEffect()
+    updataLocationMarker(curLocation) // 响应式更新定位数据
+
+    return {
+      curLocation,
+      locationList
+    }
   }
 }
 </script>

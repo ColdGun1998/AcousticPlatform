@@ -18,6 +18,12 @@ export default Vuex.createStore({
       state.locationSettings.userId = userId
       state.locationSettings.sceneId = sceneId
       state.locationSettings.sampleNum = sampleNum
+    },
+    changeLocationData (state, payload) {
+      const { curLocation, locationList } = payload
+      state.curLocation = curLocation
+      state.locationList = locationList
+      console.log(state.curLocation, state.locationList)
     }
   },
   actions: {
