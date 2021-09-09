@@ -4,27 +4,29 @@
 <script>
 
 import { get } from '../utils/request.js'
-import { onMounted, onUnmounted, onBeforeUnmount } from 'vue'
+import { onMounted, onUnmounted, onBeforeUnmount, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 
 let myChart = null
 const updateChart = async (userId, sceneId, sampleNum, chart) => {
   const result = await get(`api/location/get?scene_id=${sceneId}&user_id=${userId}&frame_size=${sampleNum}`)
   // 过滤器
-  if (result?.code === 200 && result?.data && result?.data?.list) {
-    // const locations = result.data.list[0]?.locations.map((item) => {
-    //   return item.coordinate.split(',').map(Number)
-    // })
-    // chart.setOption({
-    //   series: [{
-    //     name: '最近位置',
-    //     data: [locations[0]]
-    //   }, {
-    //     name: '历史轨迹',
-    //     data: locations
-    //   }
-    //   ]
-    // })
+  console.log(result.data)
+  // 如果存在最新数据
+  if (result?.code === 200 && result?.data && result?.data.list.length !== 0) {
+    const locations = result.data.list[0]?.locations.map((item) => {
+      return item.coordinate.split(',').map(Number)
+    })
+    chart.setOption({
+      series: [{
+        name: '最近位置',
+        data: [locations[0]]
+      }, {
+        name: '历史轨迹',
+        data: locations
+      }
+      ]
+    })
   }
 }
 const initChart = (chart) => {
@@ -103,10 +105,6 @@ const initChart = (chart) => {
 
 export default {
   name: 'ScatterChart',
-  computed: {
-  },
-  watch: {
-  },
   setup () {
     onMounted(() => {
       if (window.echarts) {
@@ -121,12 +119,22 @@ export default {
     let timer = null
     timer = setInterval(() => {
       const { userId, sceneId, sampleNum } = store.state.locationSettings
-      console.log('获取最新的位置信息', userId, sceneId, sampleNum)
+      console.log('每隔1s获取最新的位置信息', userId, sceneId, sampleNum)
       updateChart(userId, sceneId, sampleNum, myChart)
     }, 1000)
     onBeforeUnmount(() => {
       clearInterval(timer)
     })
+    const locationSettings = computed(() => {
+      return store.state.locationSettings
+    })
+    watch(() => locationSettings, (newVal, oldVal) => {
+      console.log('监听到locationSettings变化')
+      updateChart(locationSettings.value.userId, locationSettings.value.sceneId, locationSettings.value.sampleNum, myChart)
+    }, { deep: true })
+    return {
+      locationSettings
+    }
   }
 }
 </script>

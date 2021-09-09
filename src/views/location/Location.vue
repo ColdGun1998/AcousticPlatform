@@ -103,7 +103,6 @@ export default {
       const curSceneSettings = state.settings.sceneOptions.find((item) => {
         return item.id === sceneId
       })
-      console.log('change')
       if (curSceneSettings) {
         state.fengSettings.fmapID = curSceneSettings.fmapID
         state.fengSettings.appName = curSceneSettings.appName

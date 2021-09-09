@@ -56,3 +56,4 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 31. 没有选择场景时，应该有错误提示
 32. watchEffect优化watch
 33. 地图加载中显示动画
+34. location初始化时,sceneID和userID可能为空值

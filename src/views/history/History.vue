@@ -1,18 +1,9 @@
 <template>
-  <FengMap/>
+  <h3>分析历史数据</h3>
 </template>
 <script>
-import FengMap from '../../components/FengMap'
 export default {
-  name: 'History',
-  components: { FengMap },
-  data () {
-    return {
-    }
-  },
-  setup () {
-
-  }
+  name: 'History'
 }
 </script>
 <style lang="scss" scoped>
